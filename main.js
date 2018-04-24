@@ -65,4 +65,3 @@ function myMove(event) {
   }
   return false;
 }
-

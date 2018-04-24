@@ -296,4 +296,3 @@ class AllFunctionO {
   //   return false;
   // }
 }
-
