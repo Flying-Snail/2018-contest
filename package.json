@@ -1,0 +1,23 @@
+{
+  "name": "2018-contest",
+  "version": "1.0.0",
+  "description": "直接打开index.html即可",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Flying-Snail/2018-contest.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Flying-Snail/2018-contest/issues"
+  },
+  "homepage": "https://github.com/Flying-Snail/2018-contest#readme",
+  "devDependencies": {
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.11.0"
+  }
+}
