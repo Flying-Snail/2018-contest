@@ -25,7 +25,7 @@ const colors = [
 // 初始化画布
 function init() {
   items = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
-  allFunc = new AllFunctionO(ctx, items, colors);
+  allFunc = new AllFunctionO(ctx, items, colors, canvas);
   // 清空虚拟对话框
   document.getElementById('append').innerHTML = '';
   // 绘制初始图形，为16个底色块儿
@@ -45,9 +45,30 @@ init();
 // 键盘按下时触发的事件
 function myMove(event) {
   if (event && event.keyCode >= 37 && event.keyCode <= 40) {
+    let dir = '';
+    switch (event.keyCode) {
+      case 39:
+        dir = 'r';
+        break;
+      case 37:
+        dir = 'l';
+        break;
+      case 40:
+        dir = 'd';
+        break;
+      case 38:
+        dir = 't';
+        break;
+      default:
+        break;
+    }
+    // 动画
+    const oldArr1 = AllFunctionO.copy(items);
+    allFunc.calculateMove(ctx, oldArr1, dir);
+    // allFunc.moveArr = [];
     // 储存当前数组改变之前的状态和计算改变后的状态
     const oldArr = AllFunctionO.copy(items);
-    const newArr = allFunc.calculate(event, items);
+    const newArr = allFunc.calculate(dir, items);
     // 重绘新的的内容
     allFunc.draw(ctx, items);
     // 判断是否胜利

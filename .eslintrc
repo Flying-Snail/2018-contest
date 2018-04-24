@@ -5,5 +5,9 @@
     },
     "globals": {
         "document": true
+    },
+    "rules": {
+        "comma-dangle": "off",
+        "linebreak-style": "off"
     }
 }

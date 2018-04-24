@@ -1,10 +1,13 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-plusplus */
 class AllFunctionO {
-  constructor(ctx, items, colors) {
+  constructor(ctx, items, colors, canvas) {
     this.ctx = ctx;
     this.items = items;
     this.colors = colors;
+    this.canvas = canvas;
+    this.moveArr = [];
+    this.times = 1;
     // 生成程序中的随机数
     this.randomNum = function randomNum() {
       // 随机位置[0,3]
@@ -15,6 +18,89 @@ class AllFunctionO {
         randomIndex,
         twoOrFour,
       };
+    };
+    this.initBackground = function initBackground() {
+      ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      // 绘制初始图形，为16个底色块儿
+      for (let i = 0; i < 4; i += 1) {
+        for (let j = 0; j < 4; j += 1) {
+          ctx.fillStyle = 'rgb(205, 193, 180)';
+          ctx.fillRect((j * 120) + 20, (i * 120) + 20, 100, 100);
+        }
+      }
+    };
+    this.move = function move(arr) {
+      const { times } = this;
+      if (times <= 480) {
+        // 当循环次数小于61时，渲染
+        this.initBackground();
+        for (let i = 0, len = arr.length; i < len; i++) {
+          const nowMoveArr = arr[i];
+          const nowI = nowMoveArr[0]; const nowJ = nowMoveArr[1];
+          const colorNum = items[nowI][nowJ];
+          let xB; let yB; let xT; let yT;
+          switch (nowMoveArr[2]) {
+            case 'r':
+              // 当右滑时
+              xB = (nowJ * 120) + 20 + (times * (nowMoveArr[3] / 480));
+              yB = (nowI * 120) + 20;
+              xT = (nowJ * 120) + 30 + (times * (nowMoveArr[3] / 480));
+              yT = (nowI * 120) + 70;
+              ctx.fillStyle = this.colors[(Math.log(colorNum) / Math.log(2)) - 1];
+              ctx.fillRect(xB, yB, 100, 100);
+              ctx.fillStyle = 'rgb(187, 173, 165)';
+              ctx.fillText(colorNum, xT, yT);
+              break;
+            case 'l':
+              // 左滑
+              xB = ((nowJ * 120) + 20) - (times * (nowMoveArr[3] / 480));
+              yB = (nowI * 120) + 20;
+              xT = ((nowJ * 120) + 30) - (times * (nowMoveArr[3] / 480));
+              yT = (nowI * 120) + 70;
+              ctx.fillStyle = this.colors[(Math.log(colorNum) / Math.log(2)) - 1];
+              ctx.fillRect(xB, yB, 100, 100);
+              ctx.fillStyle = 'rgb(187, 173, 165)';
+              ctx.fillText(colorNum, xT, yT);
+              break;
+            case 'd':
+              // 下滑
+              ctx.fillStyle = this.colors[(Math.log(colorNum) / Math.log(2)) - 1];
+              ctx.fillRect(
+                (nowJ * 120) + 20,
+                (nowI * 120) + 20 + (times * (nowMoveArr[3] / 480)), 100, 100
+              );
+              ctx.fillStyle = 'rgb(187, 173, 165)';
+              ctx.fillText(
+                colorNum,
+                (nowJ * 120) + 30,
+                (nowI * 120) + 70 + (times * (nowMoveArr[3] / 480))
+              );
+              break;
+            case 't':
+              // 上滑
+              ctx.fillStyle = this.colors[(Math.log(colorNum) / Math.log(2)) - 1];
+              ctx.fillRect(
+                (nowJ * 120) + 20,
+                (nowI * 120) + 20 + (times * (nowMoveArr[3] / 480)), 100, 100
+              );
+              ctx.fillStyle = 'rgb(187, 173, 165)';
+              ctx.fillText(
+                colorNum,
+                (nowJ * 120) + 30,
+                ((nowI * 120) + 70) - (times * (nowMoveArr[3] / 480))
+              );
+              break;
+            default:
+              break;
+          }
+        }
+        this.times += 1;
+        const that = this;
+        setTimeout(that.move(arr), 1000 / 60);
+      } else {
+        this.times = 1;
+        this.moveArr = [];
+      }
     };
     // 判断当前行或列是否有值
     this.nowLineHasValue = function nowLineHasValue(arr) {
@@ -121,28 +207,10 @@ class AllFunctionO {
   }
 
 
-  calculate(event, items) {
+  calculate(dir, items) {
     const myItems = items;
     // 判断滑动方向，左右化时，把当前行传入changeThisLine，上下滑把当前列传入changeThisLine
     // changeThisLine返回当前操作返回的结果数组（只能为一行或一列）
-    let dir = '';
-    switch (event.keyCode) {
-      case 39:
-        dir = 'r';
-        break;
-      case 37:
-        dir = 'l';
-        break;
-      case 40:
-        dir = 'd';
-        break;
-      case 38:
-        dir = 't';
-        break;
-      default:
-        break;
-    }
-
     if (dir === 'r' || dir === 'l') {
       // 左右滑
       for (let i = 0; i < 4; i += 1) {
@@ -174,6 +242,7 @@ class AllFunctionO {
   }
 
   draw(ctx, items) {
+    ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     for (let i = 0; i < 4; i += 1) {
       for (let j = 0; j < 4; j += 1) {
         const colorNum = items[i][j];
@@ -282,18 +351,75 @@ class AllFunctionO {
       </div>`;
   }
 
-  // //  判断是否产生新的块儿
-  // isCreat(ctx, items) {
-  //   // 如果发现16个位置任意位置值为零，生成新块儿。否则什么都不做。
-  //   for (let i = 0; i < 4; i += 1) {
-  //     for (let j = 0; j < 4; j += 1) {
-  //       if (items[i][j] === 0) {
-  //         this.creatNewBlock(this.ctx, this.items);
-  //         return true;
-  //       }
-  //     }
-  //   }
-  //   return false;
-  // }
+  calculateMove(ctx, items, dir) {
+    if (dir === 'r' || dir === 'd') {
+      for (let i = 0; i < 4; i += 1) {
+        let thisline = [];
+        if (dir === 'r') {
+          thisline = items[i];
+        } else {
+          thisline = [
+            items[0][i],
+            items[1][i],
+            items[2][i],
+            items[3][i],
+          ];
+        }
+        if (this.nowLineHasValue(thisline)) {
+          // 当前行有值
+          let moveL = 0; const arr1 = thisline; let end = 3;
+          for (let k = 0; k < 4; k += 1) {
+            for (let j = end; j >= 0; j -= 1) {
+              if (arr1[j] === 0) {
+                moveL += 120;
+              } else {
+                this.moveArr.push([i, j, dir, moveL]);
+                moveL = 0;
+                arr1[end--] = thisline[j];
+                arr1[j] = 0;
+                break;
+              }
+            }
+          }
+        }
+      }
+      // 得到所有移动数据
+      this.move(this.moveArr);
+    } else if (dir === 't' || dir === 'l') {
+      for (let i = 0; i < 4; i += 1) {
+        let thisline = [];
+        if (dir === 'l') {
+          thisline = items[i];
+        } else {
+          thisline = [
+            items[0][i],
+            items[1][i],
+            items[2][i],
+            items[3][i],
+          ];
+        }
+        if (this.nowLineHasValue(thisline)) {
+          // 当前行有值
+          let moveL = 0; const arr1 = thisline; let end = 0;
+          for (let k = 0; k < 4; k += 1) {
+            for (let j = end; j < 4; j += 1) {
+              if (arr1[j] === 0) {
+                moveL += 120;
+              } else {
+                this.moveArr.push([i, j, dir, moveL]);
+                moveL = 0;
+                arr1[end++] = thisline[j];
+                arr1[j] = 0;
+                break;
+              }
+            }
+          }
+        }
+      }
+      // 得到所有移动数据
+      this.move(this.moveArr);
+    }
+    return this.moveArr;
+  }
 }
 
