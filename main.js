@@ -21,7 +21,7 @@ const colors = [
   '#e3ba14',
   '#ecc400',
 ];
-
+let dir = '';
 // 初始化画布
 function init() {
   items = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
@@ -42,10 +42,39 @@ function init() {
 
 init();
 
+function beginMove() {
+  if (allFunc.times < 11) {
+    allFunc.move();
+    setTimeout(() => {
+      beginMove();
+      allFunc.times += 1;
+    }, 1000 / 60);
+  } else {
+    allFunc.times = 1;
+    allFunc.moveArr = [];
+    // 储存当前数组改变之前的状态和计算改变后的状态
+    const oldArr = AllFunctionO.copy(items);
+    const newArr = allFunc.calculate(dir, items);
+    // 重绘新的的内容
+    allFunc.draw(ctx, items);
+    // 判断是否胜利
+    if (AllFunctionO.overOrWin(items) === 'win') {
+      AllFunctionO.win();
+    } else if (!AllFunctionO.arrSame(oldArr, newArr)) {
+      // 未胜利的话判断新旧数组是否相等
+      // 不相等生成新块
+      allFunc.creatNewBlock(ctx, items);
+      // 生成新块后判定游戏是否失败
+      if (AllFunctionO.overOrWin(items) === 'over') {
+        AllFunctionO.over();
+      }
+    }
+  }
+}
+
 // 键盘按下时触发的事件
 function myMove(event) {
   if (event && event.keyCode >= 37 && event.keyCode <= 40) {
-    let dir = '';
     switch (event.keyCode) {
       case 39:
         dir = 'r';
@@ -65,25 +94,7 @@ function myMove(event) {
     // 动画
     const oldArr1 = AllFunctionO.copy(items);
     allFunc.calculateMove(ctx, oldArr1, dir);
-    // allFunc.moveArr = [];
-    // 储存当前数组改变之前的状态和计算改变后的状态
-    const oldArr = AllFunctionO.copy(items);
-    const newArr = allFunc.calculate(dir, items);
-    // 重绘新的的内容
-    allFunc.draw(ctx, items);
-    // 判断是否胜利
-    if (AllFunctionO.overOrWin(items) === 'win') {
-      AllFunctionO.win();
-    } else if (!AllFunctionO.arrSame(oldArr, newArr)) {
-      // 未胜利的话判断新旧数组是否相等
-      // 不相等生成新块
-      allFunc.creatNewBlock(ctx, items);
-      // 生成新块后判定游戏是否失败
-      if (AllFunctionO.overOrWin(items) === 'over') {
-        AllFunctionO.over();
-      }
-    }
+    beginMove();
   }
   return false;
 }
-

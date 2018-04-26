@@ -29,77 +29,67 @@ class AllFunctionO {
         }
       }
     };
-    this.move = function move(arr) {
+    this.move = function move() {
+      const arr = this.moveArr;
       const { times } = this;
-      if (times <= 480) {
-        // 当循环次数小于61时，渲染
-        this.initBackground();
-        for (let i = 0, len = arr.length; i < len; i++) {
-          const nowMoveArr = arr[i];
-          const nowI = nowMoveArr[0]; const nowJ = nowMoveArr[1];
-          const colorNum = items[nowI][nowJ];
-          let xB; let yB; let xT; let yT;
-          switch (nowMoveArr[2]) {
-            case 'r':
-              // 当右滑时
-              xB = (nowJ * 120) + 20 + (times * (nowMoveArr[3] / 480));
-              yB = (nowI * 120) + 20;
-              xT = (nowJ * 120) + 30 + (times * (nowMoveArr[3] / 480));
-              yT = (nowI * 120) + 70;
-              ctx.fillStyle = this.colors[(Math.log(colorNum) / Math.log(2)) - 1];
-              ctx.fillRect(xB, yB, 100, 100);
-              ctx.fillStyle = 'rgb(187, 173, 165)';
-              ctx.fillText(colorNum, xT, yT);
-              break;
-            case 'l':
-              // 左滑
-              xB = ((nowJ * 120) + 20) - (times * (nowMoveArr[3] / 480));
-              yB = (nowI * 120) + 20;
-              xT = ((nowJ * 120) + 30) - (times * (nowMoveArr[3] / 480));
-              yT = (nowI * 120) + 70;
-              ctx.fillStyle = this.colors[(Math.log(colorNum) / Math.log(2)) - 1];
-              ctx.fillRect(xB, yB, 100, 100);
-              ctx.fillStyle = 'rgb(187, 173, 165)';
-              ctx.fillText(colorNum, xT, yT);
-              break;
-            case 'd':
-              // 下滑
-              ctx.fillStyle = this.colors[(Math.log(colorNum) / Math.log(2)) - 1];
-              ctx.fillRect(
-                (nowJ * 120) + 20,
-                (nowI * 120) + 20 + (times * (nowMoveArr[3] / 480)), 100, 100
-              );
-              ctx.fillStyle = 'rgb(187, 173, 165)';
-              ctx.fillText(
-                colorNum,
-                (nowJ * 120) + 30,
-                (nowI * 120) + 70 + (times * (nowMoveArr[3] / 480))
-              );
-              break;
-            case 't':
-              // 上滑
-              ctx.fillStyle = this.colors[(Math.log(colorNum) / Math.log(2)) - 1];
-              ctx.fillRect(
-                (nowJ * 120) + 20,
-                (nowI * 120) + 20 + (times * (nowMoveArr[3] / 480)), 100, 100
-              );
-              ctx.fillStyle = 'rgb(187, 173, 165)';
-              ctx.fillText(
-                colorNum,
-                (nowJ * 120) + 30,
-                ((nowI * 120) + 70) - (times * (nowMoveArr[3] / 480))
-              );
-              break;
-            default:
-              break;
-          }
+      this.initBackground();
+      for (let i = 0, len = arr.length; i < len; i++) {
+        const nowMoveArr = arr[i];
+        const nowI = nowMoveArr[0]; const nowJ = nowMoveArr[1];
+        const colorNum = items[nowI][nowJ];
+        const eachMoveLen = times * (nowMoveArr[3] / 10);
+        let xB; let yB; let xT; let yT;
+        switch (nowMoveArr[2]) {
+          case 'r':
+            // 当右滑时
+            xB = (nowJ * 120) + 20 + eachMoveLen;
+            yB = (nowI * 120) + 20;
+            xT = (nowJ * 120) + 30 + eachMoveLen;
+            yT = (nowI * 120) + 70;
+            ctx.fillStyle = this.colors[(Math.log(colorNum) / Math.log(2)) - 1];
+            ctx.fillRect(xB, yB, 100, 100);
+            ctx.font = '30px Arial';
+            ctx.fillStyle = 'rgb(187, 173, 165)';
+            ctx.fillText(colorNum, xT, yT);
+            break;
+          case 'l':
+            // 左滑
+            xB = ((nowJ * 120) + 20) - eachMoveLen;
+            yB = (nowI * 120) + 20;
+            xT = ((nowJ * 120) + 30) - eachMoveLen;
+            yT = (nowI * 120) + 70;
+            ctx.fillStyle = this.colors[(Math.log(colorNum) / Math.log(2)) - 1];
+            ctx.fillRect(xB, yB, 100, 100);
+            ctx.font = '30px Arial';
+            ctx.fillStyle = 'rgb(187, 173, 165)';
+            ctx.fillText(colorNum, xT, yT);
+            break;
+          case 'd':
+            // 下滑
+            xB = (nowJ * 120) + 20;
+            yB = (nowI * 120) + 20 + eachMoveLen;
+            xT = (nowJ * 120) + 30;
+            yT = (nowI * 120) + 70 + eachMoveLen;
+            ctx.fillStyle = this.colors[(Math.log(colorNum) / Math.log(2)) - 1];
+            ctx.fillRect(xB, yB, 100, 100);
+            ctx.font = '30px Arial';
+            ctx.fillStyle = 'rgb(187, 173, 165)';
+            ctx.fillText(colorNum, xT, yT);
+            break;
+          case 't':
+            // 上滑
+            xB = ((nowJ * 120) + 20);
+            yB = (nowI * 120) + 20 + eachMoveLen;
+            xT = (nowJ * 120) + 30;
+            yT = ((nowI * 120) + 70) - eachMoveLen;
+            ctx.fillStyle = this.colors[(Math.log(colorNum) / Math.log(2)) - 1];
+            ctx.fillRect(xB, yB, 100, 100);
+            ctx.fillStyle = 'rgb(187, 173, 165)';
+            ctx.fillText(colorNum, xT, yT);
+            break;
+          default:
+            break;
         }
-        this.times += 1;
-        const that = this;
-        setTimeout(that.move(arr), 1000 / 60);
-      } else {
-        this.times = 1;
-        this.moveArr = [];
       }
     };
     // 判断当前行或列是否有值
@@ -252,6 +242,7 @@ class AllFunctionO {
         } else {
           ctx.fillStyle = this.colors[(Math.log(colorNum) / Math.log(2)) - 1];
           ctx.fillRect((j * 120) + 20, (i * 120) + 20, 100, 100);
+          ctx.font = '30px Arial';
           ctx.fillStyle = 'rgb(187, 173, 165)';
           ctx.fillText(colorNum, (j * 120) + 30, (i * 120) + 70);
         }
@@ -373,7 +364,11 @@ class AllFunctionO {
               if (arr1[j] === 0) {
                 moveL += 120;
               } else {
-                this.moveArr.push([i, j, dir, moveL]);
+                if (dir === 'r') {
+                  this.moveArr.push([i, j, dir, moveL]);
+                } else {
+                  this.moveArr.push([j, i, dir, moveL]);
+                }
                 moveL = 0;
                 arr1[end--] = thisline[j];
                 arr1[j] = 0;
@@ -383,8 +378,6 @@ class AllFunctionO {
           }
         }
       }
-      // 得到所有移动数据
-      this.move(this.moveArr);
     } else if (dir === 't' || dir === 'l') {
       for (let i = 0; i < 4; i += 1) {
         let thisline = [];
@@ -406,7 +399,11 @@ class AllFunctionO {
               if (arr1[j] === 0) {
                 moveL += 120;
               } else {
-                this.moveArr.push([i, j, dir, moveL]);
+                if (dir === 'l') {
+                  this.moveArr.push([i, j, dir, moveL]);
+                } else {
+                  this.moveArr.push([j, i, dir, moveL]);
+                }
                 moveL = 0;
                 arr1[end++] = thisline[j];
                 arr1[j] = 0;
@@ -416,8 +413,6 @@ class AllFunctionO {
           }
         }
       }
-      // 得到所有移动数据
-      this.move(this.moveArr);
     }
     return this.moveArr;
   }
